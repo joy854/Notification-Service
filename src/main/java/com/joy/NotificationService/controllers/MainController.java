@@ -9,9 +9,12 @@ import com.joy.NotificationService.model.response.ErrorResponse;
 import com.joy.NotificationService.model.response.MessageModelResponse;
 import com.joy.NotificationService.services.BlackListService;
 import com.joy.NotificationService.services.MessageService;
+import com.joy.NotificationService.shared.dto.BlackListDto;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class MainController {
@@ -57,6 +60,12 @@ public class MainController {
         else{
             returnValue.setData("Error: Number not Blacklisted...");
         }
+        return returnValue;
+    }
+
+    @GetMapping("v1/blacklist")
+    public List<BlackListDto> getAll(){
+        List<BlackListDto> returnValue=blackListService.getAllNumbers();
         return returnValue;
     }
 }

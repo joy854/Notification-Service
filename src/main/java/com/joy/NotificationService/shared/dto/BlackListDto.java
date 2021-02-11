@@ -1,5 +1,8 @@
 package com.joy.NotificationService.shared.dto;
 
-public class BlackListDto {
+import lombok.Data;
 
+@Data
+public class BlackListDto {
+    private String blacklistNumber;
 }
