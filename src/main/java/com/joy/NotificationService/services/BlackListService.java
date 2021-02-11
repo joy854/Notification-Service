@@ -4,4 +4,5 @@ import com.joy.NotificationService.model.request.BlackListNumbers;
 
 public interface BlackListService {
     public void saveNumber(BlackListNumbers blackListNumbers);
+    public boolean deleteNumber(String number);
 }

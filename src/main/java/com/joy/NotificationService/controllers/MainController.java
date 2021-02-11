@@ -1,5 +1,6 @@
 package com.joy.NotificationService.controllers;
 
+import com.joy.NotificationService.model.request.BlackListNumber;
 import com.joy.NotificationService.model.request.BlackListNumbers;
 import com.joy.NotificationService.model.request.Message;
 import com.joy.NotificationService.model.response.BlackListAddResponse;
@@ -10,10 +11,7 @@ import com.joy.NotificationService.services.BlackListService;
 import com.joy.NotificationService.services.MessageService;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MainController {
@@ -46,6 +44,19 @@ public class MainController {
         blackListService.saveNumber(blackListNumbers);
         BlackListAddResponse returnValue=new BlackListAddResponse();
         returnValue.setData("Successfully Blacklisted");
+        return returnValue;
+    }
+
+    @DeleteMapping("v1/blacklist")
+    public BlackListAddResponse deleteNumber(@RequestBody BlackListNumber blackListNumber){
+        boolean temp=blackListService.deleteNumber(blackListNumber.getPhone_number());
+        BlackListAddResponse returnValue=new BlackListAddResponse();
+        if(temp){
+            returnValue.setData("Successfully Deleted");
+        }
+        else{
+            returnValue.setData("Error: Number not Blacklisted...");
+        }
         return returnValue;
     }
 }
