@@ -1,8 +1,9 @@
-package com.joy.NotificationService.services;
+package com.joy.NotificationService.services.impl;
 
 import com.joy.NotificationService.io.entity.BlackListEntity;
 import com.joy.NotificationService.model.request.BlackListNumbers;
 import com.joy.NotificationService.repository.BlackListRepository;
+import com.joy.NotificationService.services.BlackListService;
 import com.joy.NotificationService.shared.dto.BlackListDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
