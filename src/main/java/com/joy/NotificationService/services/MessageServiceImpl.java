@@ -27,4 +27,12 @@ public class MessageServiceImpl implements MessageService {
         return returnValue;
     }
 
+    @Override
+    public MessageDto getMessageDetail(Integer id) {
+        MessageEntity msgDetail=repo.findById(id).orElse(null);
+        MessageDto returnValue =new MessageDto();
+        BeanUtils.copyProperties(msgDetail,returnValue);
+        return returnValue;
+    }
+
 }

@@ -3,10 +3,7 @@ package com.joy.NotificationService.controllers;
 import com.joy.NotificationService.model.request.BlackListNumber;
 import com.joy.NotificationService.model.request.BlackListNumbers;
 import com.joy.NotificationService.model.request.Message;
-import com.joy.NotificationService.model.response.BlackListAddResponse;
-import com.joy.NotificationService.model.response.DataResponse;
-import com.joy.NotificationService.model.response.ErrorResponse;
-import com.joy.NotificationService.model.response.MessageModelResponse;
+import com.joy.NotificationService.model.response.*;
 import com.joy.NotificationService.services.BlackListService;
 import com.joy.NotificationService.services.MessageService;
 import com.joy.NotificationService.shared.dto.BlackListDto;
@@ -66,6 +63,14 @@ public class MainController {
     @GetMapping("v1/blacklist")
     public List<BlackListDto> getAll(){
         List<BlackListDto> returnValue=blackListService.getAllNumbers();
+        return returnValue;
+    }
+
+    @GetMapping("/v1/sms/{id}")
+    public MessageDetailResponse getMessageDetail(@PathVariable Integer id){
+        MessageDto messageDto=messageService.getMessageDetail(id);
+        MessageDetailResponse returnValue=new MessageDetailResponse();
+        returnValue.setData(messageDto);
         return returnValue;
     }
 }
