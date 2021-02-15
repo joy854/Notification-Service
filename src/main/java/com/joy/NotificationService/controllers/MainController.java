@@ -2,13 +2,17 @@ package com.joy.NotificationService.controllers;
 
 import com.joy.NotificationService.model.request.BlackListNumber;
 import com.joy.NotificationService.model.request.BlackListNumbers;
+import com.joy.NotificationService.model.request.ElasticSearchInput;
 import com.joy.NotificationService.model.request.Message;
 import com.joy.NotificationService.model.response.*;
 import com.joy.NotificationService.services.BlackListService;
+import com.joy.NotificationService.services.ElasticSearchService;
 import com.joy.NotificationService.services.MessageService;
 import com.joy.NotificationService.shared.dto.BlackListDto;
+import com.joy.NotificationService.shared.dto.EsDto;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +25,9 @@ public class MainController {
 
     @Autowired
     BlackListService blackListService;
+
+    @Autowired
+    ElasticSearchService elasticSearchService;
 
     @PostMapping("v1/sms/send")
     public MessageModelResponse send(@RequestBody Message msg) {
@@ -72,5 +79,20 @@ public class MainController {
         MessageDetailResponse returnValue=new MessageDetailResponse();
         returnValue.setData(messageDto);
         return returnValue;
+    }
+
+    @GetMapping ("/v1/message/{text}")
+    public List<EsDto> getAllByText(@PathVariable String text){
+        return elasticSearchService.findByMessage(text);
+    }
+
+    @GetMapping("v1/date")
+    public List<EsDto> getAllBetweenDate(@RequestBody ElasticSearchInput elasticSearchInput){
+        return elasticSearchService.findByDate(elasticSearchInput);
+    }
+
+    @GetMapping("v1/elastic")
+    public List<EsDto> getAllElastic(){
+        return elasticSearchService.findAll();
     }
 }

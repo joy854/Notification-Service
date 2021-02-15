@@ -1,16 +1,20 @@
 package com.joy.NotificationService.services.impl;
 
 import com.joy.NotificationService.io.entity.BlackListEntity;
+import com.joy.NotificationService.io.entity.EsEntity;
 import com.joy.NotificationService.io.entity.MessageEntity;
 import com.joy.NotificationService.model.request.ImiConnectApi.ApiRequest;
 import com.joy.NotificationService.model.request.ImiConnectApi.Channels;
 import com.joy.NotificationService.model.request.ImiConnectApi.Destination;
 import com.joy.NotificationService.model.request.ImiConnectApi.Sms;
 import com.joy.NotificationService.repository.BlackListRepository;
+import com.joy.NotificationService.repository.EsRepository;
 import com.joy.NotificationService.repository.MessageRepository;
 import com.joy.NotificationService.services.KafkaConsumer;
 import com.joy.NotificationService.services.SmsApiService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,9 @@ public class KafkaConsumerImpl implements KafkaConsumer {
 
     @Autowired
     MessageRepository messageRepository;
+
+    @Autowired
+    EsRepository esRepository;
 
     @Autowired
     SmsApiService smsApiService;
@@ -60,8 +67,12 @@ public class KafkaConsumerImpl implements KafkaConsumer {
                     .destination(destinationList)
                     .build();
 
-            String response=smsApiService.smsSend(apiRequest);
-            System.out.println(response);
+//            String response=smsApiService.smsSend(apiRequest);
+            EsEntity entity=new EsEntity();
+            entity.setCreatedAt(messageEntity.getCreated_at());
+            BeanUtils.copyProperties(messageEntity,entity);
+            esRepository.save(entity);
+//            System.out.println(response);
         } else {
 
         }
