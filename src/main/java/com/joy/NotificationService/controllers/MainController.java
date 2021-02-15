@@ -82,13 +82,16 @@ public class MainController {
     }
 
     @GetMapping ("/v1/message/{text}")
-    public List<EsDto> getAllByText(@PathVariable String text){
-        return elasticSearchService.findByMessage(text);
+    public List<EsDto> getAllByText(@PathVariable String text, @RequestParam(value = "page",defaultValue = "0") int page,
+                                    @RequestParam(value = "size",defaultValue = "2") int size){
+        return elasticSearchService.findByMessage(text,page,size);
     }
 
     @PostMapping("v1/date")
-    public List<EsDto> getAllBetweenDate(@RequestBody ElasticSearchInput elasticSearchInput){
-        return elasticSearchService.findByDate(elasticSearchInput);
+    public List<EsDto> getAllBetweenDate(@RequestBody ElasticSearchInput elasticSearchInput,
+                                         @RequestParam(value = "page",defaultValue = "0") int page,
+                                         @RequestParam(value = "size",defaultValue = "2") int size){
+        return elasticSearchService.findByDate(elasticSearchInput,page,size);
     }
 
     @GetMapping("v1/elastic")

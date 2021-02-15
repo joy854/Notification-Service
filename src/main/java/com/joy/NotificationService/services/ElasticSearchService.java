@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ElasticSearchService {
 //    public void save(EsDto esModel);
-    public List<EsDto> findByMessage(String messageText);
-    public List<EsDto> findByDate(ElasticSearchInput esInput);
+    public List<EsDto> findByMessage(String messageText,int page,int size);
+    public List<EsDto> findByDate(ElasticSearchInput esInput,int page,int size);
     public List<EsDto> findAll();
 }

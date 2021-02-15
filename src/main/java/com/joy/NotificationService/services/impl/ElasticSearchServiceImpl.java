@@ -10,8 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,8 +30,8 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 //    }
 
     @Override
-    public List<EsDto> findByMessage(String messageText) {
-        Page<EsEntity>entities= esRepository.findByMessage(messageText, PageRequest.of(0,2));
+    public List<EsDto> findByMessage(String messageText,int page,int size) {
+        Page<EsEntity>entities= esRepository.findByMessage(messageText, PageRequest.of(page,size));
         List<EsEntity> entitiesList=entities.getContent();
         List<EsDto> esDtos=new ArrayList<>();
         for(EsEntity entity: entitiesList){
@@ -45,13 +43,13 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     }
 
     @Override
-    public List<EsDto> findByDate(ElasticSearchInput esInput) {
+    public List<EsDto> findByDate(ElasticSearchInput esInput,int page,int size) {
         long startEpoch = dateHelper.DateConverter(esInput.getStartDate());
         long endEpoch= dateHelper.DateConverter((esInput.getEndDate()));
         System.out.println(startEpoch);
         List<EsDto>esDtos=new ArrayList<>();
 
-        Iterable<EsEntity> entities=esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch, PageRequest.of(0,100));
+        Iterable<EsEntity> entities=esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch, PageRequest.of(page,size));
 
         for(EsEntity entity:entities){
             EsDto esDto=new EsDto();
