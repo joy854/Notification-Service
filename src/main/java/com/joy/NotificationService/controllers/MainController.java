@@ -86,7 +86,7 @@ public class MainController {
         return elasticSearchService.findByMessage(text);
     }
 
-    @GetMapping("v1/date")
+    @PostMapping("v1/date")
     public List<EsDto> getAllBetweenDate(@RequestBody ElasticSearchInput elasticSearchInput){
         return elasticSearchService.findByDate(elasticSearchInput);
     }

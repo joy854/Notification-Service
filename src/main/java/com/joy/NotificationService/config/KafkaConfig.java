@@ -1,5 +1,6 @@
 package com.joy.NotificationService.config;
 
+import com.joy.NotificationService.shared.dto.MessageDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;

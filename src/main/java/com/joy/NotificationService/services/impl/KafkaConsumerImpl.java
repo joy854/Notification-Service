@@ -12,6 +12,7 @@ import com.joy.NotificationService.repository.EsRepository;
 import com.joy.NotificationService.repository.MessageRepository;
 import com.joy.NotificationService.services.KafkaConsumer;
 import com.joy.NotificationService.services.SmsApiService;
+import com.joy.NotificationService.shared.dto.MessageDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -40,10 +41,10 @@ public class KafkaConsumerImpl implements KafkaConsumer {
 //    @KafkaListener(topics = "notification.send_sms", groupId = "group_id"
 //            , containerFactory = "userKafkaListenerFactory")
     @KafkaListener(topics = "notification.send_sms", groupId = "group_id")
-    public void consume(Integer id) {
-        System.out.println("Consumed id: " + id);
-        BlackListEntity blackListEntity = blackListRepository.findById(id.toString()).orElse(null);
-        MessageEntity messageEntity = messageRepository.findById(id).orElse(null);
+    public void consume(Integer messageDto) {
+        System.out.println("Consumer " + messageDto);
+        MessageEntity messageEntity = messageRepository.findById(messageDto).orElse(null);
+        BlackListEntity blackListEntity = blackListRepository.findById(messageEntity.getPhone_number()).orElse(null);
 
         if (blackListEntity == null) {
             List<String> phoneNumber = new ArrayList<>();
@@ -74,7 +75,7 @@ public class KafkaConsumerImpl implements KafkaConsumer {
             esRepository.save(entity);
 //            System.out.println(response);
         } else {
-
+            System.out.println("in blacklist");
         }
     }
 }
