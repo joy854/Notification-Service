@@ -1,5 +1,6 @@
 package com.joy.NotificationService.io.entity;
 
+import com.joy.NotificationService.util.MessageStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,7 +21,7 @@ public class MessageEntity {
     private String message;
 
     @Column(nullable = false)
-    private String status;
+    private MessageStatus status;
 
     private String failure_code;
 

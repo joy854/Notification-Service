@@ -28,7 +28,7 @@ public class BlackListServiceImpl implements BlackListService {
             BlackListEntity blackListEntity=new BlackListEntity();
             blackListEntity.setBlacklistNumber(number);
             BlackListEntity alreadyPres=blackListRepository.findById(number).orElse(null);
-            if(alreadyPres==null)
+            if(alreadyPres==null && !blackListEntity.getBlacklistNumber().isEmpty())
                 blackListRepository.save(blackListEntity);
         }
     }
@@ -37,7 +37,7 @@ public class BlackListServiceImpl implements BlackListService {
     @CacheEvict(value = "blacklist",allEntries = true)
     public boolean deleteNumber(String number) {
         BlackListEntity alreadyPresent=blackListRepository.findById(number).orElse(null);
-        if(alreadyPresent!=null){
+        if(alreadyPresent!=null && !number.isEmpty()){
             BlackListEntity numberToBeDeleted=new BlackListEntity();
             numberToBeDeleted.setBlacklistNumber(number);
             blackListRepository.delete(numberToBeDeleted);

@@ -1,5 +1,6 @@
 package com.joy.NotificationService.shared.dto;
 
+import com.joy.NotificationService.util.MessageStatus;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,7 +14,7 @@ public class MessageDto {
 
     private String message;
 
-    private String status;
+    private MessageStatus status;
 
     private String failure_code;
 

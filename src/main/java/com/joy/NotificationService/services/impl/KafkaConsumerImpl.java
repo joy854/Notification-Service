@@ -13,6 +13,7 @@ import com.joy.NotificationService.repository.MessageRepository;
 import com.joy.NotificationService.services.KafkaConsumer;
 import com.joy.NotificationService.services.SmsApiService;
 import com.joy.NotificationService.shared.dto.MessageDto;
+import com.joy.NotificationService.util.MessageStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -42,7 +43,7 @@ public class KafkaConsumerImpl implements KafkaConsumer {
 //            , containerFactory = "userKafkaListenerFactory")
     @KafkaListener(topics = "notification.send_sms", groupId = "group_id")
     public void consume(Integer messageDto) {
-        System.out.println("Consumer " + messageDto);
+//        System.out.println("Consumer " + messageDto);
         MessageEntity messageEntity = messageRepository.findById(messageDto).orElse(null);
         BlackListEntity blackListEntity = blackListRepository.findById(messageEntity.getPhone_number()).orElse(null);
 
@@ -68,14 +69,24 @@ public class KafkaConsumerImpl implements KafkaConsumer {
                     .destination(destinationList)
                     .build();
 
-//            String response=smsApiService.smsSend(apiRequest);
+//          String response=smsApiService.smsSend(apiRequest);
+//          System.out.println(response);
+            messageEntity.setStatus(MessageStatus.SUCCESS);
+            messageRepository.save(messageEntity);
+
             EsEntity entity=new EsEntity();
             entity.setCreatedAt(messageEntity.getCreated_at());
             BeanUtils.copyProperties(messageEntity,entity);
             esRepository.save(entity);
-//            System.out.println(response);
+
+
         } else {
             System.out.println("in blacklist");
+            messageEntity.setStatus(MessageStatus.FAILED);
+            messageEntity.setFailure_comments("Number in Blacklist");
+            messageEntity.setFailure_code("403");
+            messageRepository.save(messageEntity);
+
         }
     }
 }
