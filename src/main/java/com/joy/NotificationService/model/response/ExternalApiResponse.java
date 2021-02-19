@@ -5,19 +5,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ExternalApiResponse {
 
-    private String code;
+    @JsonProperty("response")
+    private ArrayList<ApiResponseData> apiResponseData;
 
-    @JsonProperty("transid")
-    private String transId;
+    @Data
+    public static class ApiResponseData {
 
-    private String description;
+        @JsonProperty("transid")
+        private String transId;
 
-    @JsonProperty("correlationid")
-    private String correlationId;
+        private String code;
+        private String description;
 
+        @JsonProperty("correlationid")
+        private String correlationId;
+    }
 }

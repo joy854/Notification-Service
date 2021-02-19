@@ -7,6 +7,7 @@ import com.joy.NotificationService.model.request.ImiConnectApi.ApiRequest;
 import com.joy.NotificationService.model.request.ImiConnectApi.Channels;
 import com.joy.NotificationService.model.request.ImiConnectApi.Destination;
 import com.joy.NotificationService.model.request.ImiConnectApi.Sms;
+import com.joy.NotificationService.model.response.ExternalApiResponse;
 import com.joy.NotificationService.repository.BlackListRepository;
 import com.joy.NotificationService.repository.EsRepository;
 import com.joy.NotificationService.repository.MessageRepository;
@@ -69,15 +70,17 @@ public class KafkaConsumerImpl implements KafkaConsumer {
                     .destination(destinationList)
                     .build();
 
-//          String response=smsApiService.smsSend(apiRequest);
-//          System.out.println(response);
-            messageEntity.setStatus(MessageStatus.SUCCESS);
-            messageRepository.save(messageEntity);
-
-            EsEntity entity=new EsEntity();
-            entity.setCreatedAt(messageEntity.getCreated_at());
-            BeanUtils.copyProperties(messageEntity,entity);
-            esRepository.save(entity);
+//            ExternalApiResponse response = smsApiService.smsSend(apiRequest);
+//
+//            if (response.getApiResponseData().get(0).getCode().equals("1001")) {
+//                messageEntity.setStatus(MessageStatus.SUCCESS);
+//                messageRepository.save(messageEntity);
+//            }
+//
+//            EsEntity entity = new EsEntity();
+//            entity.setCreatedAt(messageEntity.getCreated_at());
+//            BeanUtils.copyProperties(messageEntity, entity);
+//            esRepository.save(entity);
 
 
         } else {
