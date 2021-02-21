@@ -12,9 +12,11 @@ import com.joy.NotificationService.shared.dto.BlackListDto;
 import com.joy.NotificationService.shared.dto.EsDto;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import com.joy.NotificationService.util.MessageStatus;
+import com.joy.NotificationService.util.exceptions.InvalidRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,7 @@ public class MainController {
     public ResponseEntity<Object> send(@RequestBody Message msg) {
 
         if(msg.getMessage().trim().isEmpty()){
-            return new ResponseEntity<>(new MessageModelResponse(new ErrorResponse("INVALID_REQUEST","Message cannot be empty")), HttpStatus.BAD_REQUEST);
+            throw new InvalidRequestException("Message cannot be empty");
         }
         if(msg.getPhone_number().trim().isEmpty()){
             return new ResponseEntity<>(new MessageModelResponse(new ErrorResponse("INVALID_REQUEST","phone_number is mandatory")), HttpStatus.BAD_REQUEST);
@@ -89,7 +91,7 @@ public class MainController {
         return returnValue;
     }
 
-    @GetMapping("v1/sms/{id}")
+    @GetMapping( path = "v1/sms/{id}",produces = {MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Object> getMessageDetail(@PathVariable Integer id){
 
         MessageDto messageDto=messageService.getMessageDetail(id);

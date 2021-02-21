@@ -70,17 +70,17 @@ public class KafkaConsumerImpl implements KafkaConsumer {
                     .destination(destinationList)
                     .build();
 
-            ExternalApiResponse response = smsApiService.smsSend(apiRequest);
-
-            if (response.getApiResponseData().get(0).getCode().equals("1001")) {
-                messageEntity.setStatus(MessageStatus.SUCCESS);
-                messageRepository.save(messageEntity);
-            }
-
-            EsEntity entity = new EsEntity();
-            entity.setCreatedAt(messageEntity.getCreated_at());
-            BeanUtils.copyProperties(messageEntity, entity);
-            esRepository.save(entity);
+//            ExternalApiResponse response = smsApiService.smsSend(apiRequest);
+//
+//            if (response.getApiResponseData().get(0).getCode().equals("1001")) {
+//                messageEntity.setStatus(MessageStatus.SUCCESS);
+//                messageRepository.save(messageEntity);
+//            }
+//
+//            EsEntity entity = new EsEntity();
+//            entity.setCreatedAt(messageEntity.getCreated_at());
+//            BeanUtils.copyProperties(messageEntity, entity);
+//            esRepository.save(entity);
 
 
         } else {
