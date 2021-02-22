@@ -20,11 +20,11 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     KafkaProducer producer;
 
-    public MessageDto storeRequest(Message msg){
+    public MessageDto storeRequest(Message msg) throws Exception{
         MessageDto returnValue=new MessageDto();
         MessageEntity messageEntity=new MessageEntity();
         messageEntity.setMessage(msg.getMessage());
-        messageEntity.setPhone_number(msg.getPhone_number());
+        messageEntity.setPhone_number(msg.getPhoneNumber());
         messageEntity.setStatus(MessageStatus.PENDING);
         MessageEntity msgEntity= repo.save(messageEntity);
 //        System.out.println(msgEntity);

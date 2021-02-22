@@ -11,5 +11,6 @@ public class ElasticSearchInput {
 
     private String startDate;
     private String endDate;
+    private String phoneNumber;
 
 }

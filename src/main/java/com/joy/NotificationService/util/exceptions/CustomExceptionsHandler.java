@@ -25,8 +25,14 @@ public class CustomExceptionsHandler {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public final ResponseEntity<Object> handleInvalidRequestException(ForbiddenException ex,WebRequest request){
+    public final ResponseEntity<Object> handleForbiddenRequestException(ForbiddenException ex,WebRequest request){
         ErrorResponse errorResponse=new ErrorResponse("Forbidden", ex.getMessage());
         return new ResponseEntity<>(errorResponse,HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(TimeoutException.class)
+    public final ResponseEntity<Object> handleTimeoutException(TimeoutException ex,WebRequest request){
+        ErrorResponse errorResponse=new ErrorResponse("Timeout", ex.getMessage());
+        return new ResponseEntity<>(errorResponse,HttpStatus.REQUEST_TIMEOUT);
     }
 }

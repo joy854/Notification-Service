@@ -22,7 +22,7 @@ public class EsEntity {
 
     @Id
     private Integer id;
-    private String phone_number;
+    private String phoneNumber;
     private String message;
     private Date createdAt = new Date();
 
@@ -30,7 +30,7 @@ public class EsEntity {
     public EsEntity(MessageDto message) {
 
         this.id = message.getId();
-        this.phone_number = message.getPhone_number();
+        this.phoneNumber = message.getPhone_number();
         this.message = message.getMessage();
         this.createdAt = message.getCreated_at();
 

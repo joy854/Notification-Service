@@ -13,7 +13,12 @@ public class KafkaProducerImpl implements KafkaProducer {
 
     public static final String TOPIC = "notification.send_sms";
 
-    public void sendMessageId(Integer message){
-        kafkaTemplate.send(TOPIC, message);
+    public void sendMessageId(Integer message) throws Exception {
+        try{
+            kafkaTemplate.send(TOPIC, message);
+        }
+      catch (Exception ex){
+//            throw new Exception(ex.getMessage());
+      }
     }
 }

@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface EsRepository extends ElasticsearchRepository<EsEntity,Integer> {
     Page<EsEntity> findByMessage(String text, Pageable pageable);
-    Page<EsEntity> findAllByCreatedAtBetween(long startEpoch,long endEpoch, Pageable pageable);
+    Page<EsEntity> findAllByPhoneNumberAndCreatedAtBetween(String phoneNumber,long startEpoch,long endEpoch, Pageable pageable);
 //    List<EsEntity> findAll();
 }

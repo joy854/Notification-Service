@@ -46,17 +46,16 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     public List<EsDto> findByDate(ElasticSearchInput esInput,int page,int size) {
         long startEpoch = dateHelper.DateConverter(esInput.getStartDate());
         long endEpoch= dateHelper.DateConverter((esInput.getEndDate()));
-        System.out.println(startEpoch);
+//        System.out.println(startEpoch);
         List<EsDto>esDtos=new ArrayList<>();
 
-        Iterable<EsEntity> entities=esRepository.findAllByCreatedAtBetween(startEpoch,endEpoch, PageRequest.of(page,size));
+        Iterable<EsEntity> entities=esRepository.findAllByPhoneNumberAndCreatedAtBetween(esInput.getPhoneNumber(),startEpoch,endEpoch, PageRequest.of(page,size));
 
         for(EsEntity entity:entities){
             EsDto esDto=new EsDto();
             BeanUtils.copyProperties(entity,esDto);
             esDtos.add(esDto);
         }
-
         return esDtos;
     }
 

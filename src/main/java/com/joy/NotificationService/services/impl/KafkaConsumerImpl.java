@@ -15,6 +15,9 @@ import com.joy.NotificationService.services.KafkaConsumer;
 import com.joy.NotificationService.services.SmsApiService;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import com.joy.NotificationService.util.MessageStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
@@ -43,53 +46,65 @@ public class KafkaConsumerImpl implements KafkaConsumer {
 //    @KafkaListener(topics = "notification.send_sms", groupId = "group_id"
 //            , containerFactory = "userKafkaListenerFactory")
     @KafkaListener(topics = "notification.send_sms", groupId = "group_id")
-    public void consume(Integer messageDto) {
+    public void consume(Integer messageDto) throws Exception {
+        Logger log= LoggerFactory.getLogger(KafkaConsumerImpl.class);
 //        System.out.println("Consumer " + messageDto);
-        MessageEntity messageEntity = messageRepository.findById(messageDto).orElse(null);
-        BlackListEntity blackListEntity = blackListRepository.findById(messageEntity.getPhone_number()).orElse(null);
+        try{
 
-        if (blackListEntity == null) {
-            List<String> phoneNumber = new ArrayList<>();
-            phoneNumber.add(messageEntity.getPhone_number());
-            Sms sms = Sms.builder()
-                    .text(messageEntity.getMessage())
-                    .build();
-            Channels channels = Channels.builder()
-                    .sms(sms)
-                    .build();
-            Destination destination = Destination.builder()
-                    .msisdn(phoneNumber)
-                    .correlationId(messageEntity.getId())
-                    .build();
+            MessageEntity messageEntity = messageRepository.findById(messageDto).orElse(null);
+            BlackListEntity blackListEntity = blackListRepository.findById(messageEntity.getPhone_number()).orElse(null);
+//            throw new Exception("YO");
 
-            List<Destination> destinationList = new ArrayList<>();
-            destinationList.add(destination);
+            if (blackListEntity == null) {
+                List<String> phoneNumber = new ArrayList<>();
+                phoneNumber.add(messageEntity.getPhone_number());
+                Sms sms = Sms.builder()
+                        .text(messageEntity.getMessage())
+                        .build();
+                Channels channels = Channels.builder()
+                        .sms(sms)
+                        .build();
+                Destination destination = Destination.builder()
+                        .msisdn(phoneNumber)
+                        .correlationId(messageEntity.getId())
+                        .build();
 
-            ApiRequest apiRequest = ApiRequest.builder()
-                    .channels(channels).deliveryChannel("sms")
-                    .destination(destinationList)
-                    .build();
+                List<Destination> destinationList = new ArrayList<>();
+                destinationList.add(destination);
 
-//            ExternalApiResponse response = smsApiService.smsSend(apiRequest);
-//
-//            if (response.getApiResponseData().get(0).getCode().equals("1001")) {
-//                messageEntity.setStatus(MessageStatus.SUCCESS);
-//                messageRepository.save(messageEntity);
-//            }
-//
-//            EsEntity entity = new EsEntity();
-//            entity.setCreatedAt(messageEntity.getCreated_at());
-//            BeanUtils.copyProperties(messageEntity, entity);
-//            esRepository.save(entity);
+                ApiRequest apiRequest = ApiRequest.builder()
+                        .channels(channels).deliveryChannel("sms")
+                        .destination(destinationList)
+                        .build();
+//            throw new RuntimeException("YO");
+
+            ExternalApiResponse response = smsApiService.smsSend(apiRequest);
+
+            if (response.getApiResponseData().get(0).getCode().equals("1001")) {
+                messageEntity.setStatus(MessageStatus.SUCCESS);
+                messageRepository.save(messageEntity);
+            }
+
+            EsEntity entity = new EsEntity();
+            entity.setCreatedAt(messageEntity.getCreated_at());
+            BeanUtils.copyProperties(messageEntity, entity);
+            entity.setPhoneNumber(messageEntity.getPhone_number());
+            esRepository.save(entity);
 
 
-        } else {
-            System.out.println("in blacklist");
-            messageEntity.setStatus(MessageStatus.FAILED);
-            messageEntity.setFailure_comments("Number in Blacklist");
-            messageEntity.setFailure_code("403");
-            messageRepository.save(messageEntity);
+            } else {
+                System.out.println("in blacklist");
+                messageEntity.setStatus(MessageStatus.FAILED);
+                messageEntity.setFailure_comments("Number in Blacklist");
+                messageEntity.setFailure_code("403");
+                messageRepository.save(messageEntity);
 
+            }
         }
+        catch (Exception ex){
+            log.error("Error: "+ex.getMessage());
+//            throw new Exception("HIIII");
+        }
+
     }
 }

@@ -13,11 +13,13 @@ import com.joy.NotificationService.shared.dto.EsDto;
 import com.joy.NotificationService.shared.dto.MessageDto;
 import com.joy.NotificationService.util.MessageStatus;
 import com.joy.NotificationService.util.exceptions.InvalidRequestException;
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,13 +37,13 @@ public class MainController {
     ElasticSearchService elasticSearchService;
 
     @PostMapping("v1/sms/send")
-    public ResponseEntity<Object> send(@RequestBody Message msg) {
+    public ResponseEntity<Object> send(@RequestBody Message msg) throws Exception{
 
-        if(msg.getMessage().trim().isEmpty()){
+        if(StringUtils.isNullOrEmpty(msg.getMessage())){
             throw new InvalidRequestException("Message cannot be empty");
         }
-        if(msg.getPhone_number().trim().isEmpty()){
-            return new ResponseEntity<>(new MessageModelResponse(new ErrorResponse("INVALID_REQUEST","phone_number is mandatory")), HttpStatus.BAD_REQUEST);
+        if(msg.getPhoneNumber().isEmpty() || msg.getPhoneNumber().trim().isEmpty()){
+            throw new InvalidRequestException("phone_number is mandatory");
         }
         MessageDto msgDto = messageService.storeRequest(msg);
         if (msgDto!=null) {
@@ -60,8 +62,8 @@ public class MainController {
 
     @PostMapping("v1/blacklist")
     public ResponseEntity<Object> addNumbers(@RequestBody BlackListNumbers blackListNumbers){
-        if(blackListNumbers.getPhone_numbers().isEmpty()){
-            return new ResponseEntity<>(new ErrorResponse("INVALID_REQUEST","No number to add"),HttpStatus.BAD_REQUEST);
+        if(CollectionUtils.isEmpty(blackListNumbers.getPhoneNumbers())){
+            throw new InvalidRequestException("No number to add");
         }
         blackListService.saveNumber(blackListNumbers);
         BlackListAddResponse returnValue=new BlackListAddResponse();
@@ -72,9 +74,9 @@ public class MainController {
 
     @DeleteMapping("v1/blacklist")
     public ResponseEntity<Object> deleteNumber(@RequestBody BlackListNumber blackListNumber){
-        if(blackListNumber.getPhone_number().isEmpty())
-            return new ResponseEntity<>(new ErrorResponse("INVALID_REQUEST","phone_number cannot be empty"),HttpStatus.BAD_REQUEST);
-        boolean temp=blackListService.deleteNumber(blackListNumber.getPhone_number());
+        if(StringUtils.isNullOrEmpty(blackListNumber.getPhoneNumber()))
+            throw new InvalidRequestException("phone_number is mandatory");
+        boolean temp=blackListService.deleteNumber(blackListNumber.getPhoneNumber());
         BlackListAddResponse returnValue=new BlackListAddResponse();
         if(temp){
             returnValue.setData("Successfully Deleted");
@@ -97,13 +99,15 @@ public class MainController {
         MessageDto messageDto=messageService.getMessageDetail(id);
         System.out.println(messageDto);
 
-        if(messageDto!=null){
-            MessageDetailResponse returnValue=new MessageDetailResponse();
-            returnValue.setData(messageDto);
-            return new ResponseEntity<>(returnValue,HttpStatus.OK);
+        if(messageDto==null){
+            return new ResponseEntity<>(new MessageModelResponse(
+                    new ErrorResponse("INVALID_REQUEST","request_id not found")),HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new MessageModelResponse(
-                new ErrorResponse("INVALID_REQUEST","request_id not found")),HttpStatus.BAD_REQUEST);
+
+        MessageDetailResponse returnValue=new MessageDetailResponse();
+        returnValue.setData(messageDto);
+        return new ResponseEntity<>(returnValue,HttpStatus.OK);
+
     }
 
     @GetMapping ("/v1/message/{text}")

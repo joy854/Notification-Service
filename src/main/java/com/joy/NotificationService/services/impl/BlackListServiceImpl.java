@@ -24,7 +24,7 @@ public class BlackListServiceImpl implements BlackListService {
     @Override
     @CacheEvict(value = "blacklist",allEntries = true)
     public void saveNumber(BlackListNumbers blackListNumbers) {
-        for(String number: blackListNumbers.getPhone_numbers()){
+        for(String number: blackListNumbers.getPhoneNumbers()){
             BlackListEntity blackListEntity=new BlackListEntity();
             blackListEntity.setBlacklistNumber(number);
             BlackListEntity alreadyPres=blackListRepository.findById(number).orElse(null);
